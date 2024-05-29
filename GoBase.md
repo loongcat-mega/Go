@@ -283,3 +283,203 @@ delete(m,k)
 切片转数组
 
 使用copy来复制切片元素
+
+遍历容器元素
+
+clear清除/ 重置容器元素
+
+数组指针当成数组来使用
+提高访问效率
+```go
+	for range &BigArr {
+		num1++
+	}
+	fmt.Println(num1)
+	for range BigArr[:] {
+		num2++
+	}
+```
+
+
+删除一段切片元素
+```go
+s = append (s[:from],s[to:]...)
+```
+
+```go
+	DeleteArr := []int{1, 2, 3, 4, 5, 6}
+	res := DeleteEle(DeleteArr, keep)
+	for _, val := range res {
+		fmt.Println(val)
+	}
+
+func DeleteEle(s []int, keep func(int) bool) []int {
+	res := s[:0]
+	for _, val := range s {
+		if keep(val) {
+			res = append(res, val)
+
+		}
+	}
+	return res
+}
+
+func keep(val int) bool {
+	return val%2 == 1
+}
+
+```
+
+
+特殊的插入和删除
+```txt
+1| // 前弹出(pop front，又称shift) 
+2| s, e = s[1:], s[0]  
+3| // 后弹出(pop back)  
+4| s, e = s[:len(s)-1], s[len(s)-1] 
+5| // 前推(push front)
+6| s = append([]T{e}, s...) 7| // 后推(push back)  
+8| s = append(s, e)
+```
+
+
+## 字符串 
+
+字符串和字节切片之间的转换
+
+
+
+## 函数
+
+函数签名和函数类型
+
+变长参数和变长参数函数类型，变长参数总为一个切片类型
+
+```go
+func (vals ...int64)(sum int64)
+```
+
+函数原型
+
+同一个包中声明的函数名称不能重复
+
+所有函数调用的传参均属于值复制
+
+有返回值的函数调用是一种表达式，但是有多个返回值的函数传参有要求
+
+闭包函数
+
+匿名函数
+```go
+	isMultipleofX := func(x int) func(int) bool {
+		return func(n int) bool {
+			return n%x == 0
+		}
+
+	}
+
+	var isMultipleof5 = isMultipleofX(5)
+	fmt.Println(isMultipleof5(15))
+```
+
+
+
+## 通道
+
+通道的主要作用是用来实现并发同步
+**不要让计算通过共享内存来通讯，而应该让他们通过通讯来共享内存**。当通过共享内存来通信的时候，我们应当使用一些传统的并发同步技术，如互斥锁等来避免数据竞争。通道可看作是在一个程序内部先进先出的数据队列，
+
+```go
+chan T //表示一个元素类型为T的双向通道类型，允许向通道收发数据
+
+chan <- T //单向发送通道，不允许接收
+
+<- chan T //单向接收通道，不允许发送
+
+```
+
+通道操作
+
+```go
+close(ch)//关闭通道
+ch <- v //向通道发送一个值v
+
+v = <- ch //从通道读取一个值
+
+cap(ch) // 查询通道容量
+
+
+len(ch) // 查询通道长度
+```
+
+
+
+```go
+func CHANNEL() {
+	var ball = make(chan string)
+	kickBall := func(playerName string) {
+		for {
+			fmt.Print(<-ball, "传球", "\n")
+			time.Sleep(time.Second)
+			ball <- playerName
+		}
+	}
+
+	go kickBall("张三")
+	go kickBall("李四")
+	go kickBall("六大")
+
+	ball <- "裁判"
+	var c chan bool
+	<-c//
+}
+```
+
+for-range用于通道，此循环将不断地尝试用一个通道接收数据，直到此通道关闭且他的缓冲队列为空为止，此循环变量只能有一个
+
+
+## 方法
+
+
+```go
+
+type Book struct {
+	pages int
+}
+
+func (b Book) getPage() int {
+	return b.pages
+}
+func (b *Book) setPage(page int) {
+	b.pages = page
+}
+
+func main() {
+	b := Book{10}
+	fmt.Println(b)
+	b.setPage(24)
+	fmt.Println(b)
+	fmt.Println(b.getPage())
+
+}
+```
+
+## 接口
+
+接口类型介绍和类型集。接口类型是通过内嵌若干接口元素来定义类型条件的。
+
+空接口类型的类型集包含了所有的非接口类型，所有类型均实现了空接口类型
+
+值包裹
+
+多态：接口值调用类型方法
+
+反射：一个接口值中存储的动态类型信息可以被用来检视此接口值的动态值和操纵此动态值所引用的值，这称为反射
+
+
+
+
+
+
+
+
